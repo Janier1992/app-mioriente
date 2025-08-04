@@ -15,10 +15,18 @@ import { AutomationView } from '@/components/ServiceViews/AutomationView';
 import { CustomerServiceView } from '@/components/ServiceViews/CustomerServiceView';
 import { AdministrationView } from '@/components/ServiceViews/AdministrationView';
 
+// Bottom Navigation Views
+import { TourismView } from '@/components/TourismView';
+import { StoresView } from '@/components/StoresView';
+import { MoreView } from '@/components/MoreView';
+import { BottomNavigation } from '@/components/BottomNavigation';
+
 type ViewType = 'home' | 'registro' | 'inventario' | 'automatizacion' | 'administracion' | 'atencion';
+type BottomNavType = 'inicio' | 'tiendas' | 'turismo' | 'mas';
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<ViewType>('home');
+  const [currentBottomTab, setCurrentBottomTab] = useState<BottomNavType>('inicio');
   const { toast } = useToast();
 
   const services = [
@@ -78,6 +86,27 @@ const Index = () => {
 
   const handleBackToHome = () => {
     setCurrentView('home');
+    setCurrentBottomTab('inicio');
+  };
+
+  const handleBottomTabChange = (tab: BottomNavType) => {
+    setCurrentBottomTab(tab);
+    if (tab === 'inicio') {
+      setCurrentView('home');
+    }
+  };
+
+  const renderBottomTabContent = () => {
+    switch (currentBottomTab) {
+      case 'tiendas':
+        return <StoresView onBack={handleBackToHome} />;
+      case 'turismo':
+        return <TourismView onBack={handleBackToHome} />;
+      case 'mas':
+        return <MoreView onBack={handleBackToHome} />;
+      default:
+        return renderCurrentView();
+    }
   };
 
   const renderCurrentView = () => {
@@ -209,9 +238,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header currentView={currentView} onViewChange={setCurrentView} />
-      <main className="flex-1 overflow-y-auto px-4 py-4">
-        {renderCurrentView()}
+      <main className="flex-1 overflow-y-auto px-4 py-4 pb-20">
+        {renderBottomTabContent()}
       </main>
+      <BottomNavigation 
+        activeTab={currentBottomTab} 
+        onTabChange={handleBottomTabChange} 
+      />
     </div>
   );
 };
